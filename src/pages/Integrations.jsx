@@ -23,11 +23,11 @@ jobs:
       - uses: actions/checkout@v4
       - name: Run Load Test
         env:
-          YQA_API_KEY: \${{ secrets.YQA_API_KEY }}
-          YQA_BASE_URL: \${{ secrets.YQA_BASE_URL }}
+          SARFAT_API_KEY: \${{ secrets.SARFAT_API_KEY }}
+          SARFAT_BASE_URL: \${{ secrets.SARFAT_BASE_URL }}
         run: |
-          curl -X POST "\${YQA_BASE_URL}/api/v1/tests/\${TEST_ID}/run" \\
-            -H "Authorization: Bearer \${YQA_API_KEY}" \\
+          curl -X POST "\${SARFAT_BASE_URL}/api/v1/tests/\${TEST_ID}/run" \\
+            -H "Authorization: Bearer \${SARFAT_API_KEY}" \\
             -H "Content-Type: application/json" \\
             -d '{"source": "ci", "commit": "GITHUB_SHA"}'`;
 
@@ -39,8 +39,8 @@ load-test:
     - main
   script:
     - |
-      curl -X POST "\${YQA_BASE_URL}/api/v1/tests/\${TEST_ID}/run" \\
-        -H "Authorization: Bearer \${YQA_API_KEY}" \\
+      curl -X POST "\${SARFAT_BASE_URL}/api/v1/tests/\${TEST_ID}/run" \\
+        -H "Authorization: Bearer \${SARFAT_API_KEY}" \\
         -H "Content-Type: application/json" \\
         -d '{"source": "ci", "commit": "'$CI_COMMIT_SHA'"}'`;
 
@@ -93,7 +93,7 @@ export default function Integrations() {
           <Puzzle className="w-6 h-6 text-accent" />
           <h1 className="text-2xl font-bold text-text-primary">Integrations</h1>
         </div>
-        <p className="text-text-secondary mt-1">Connect Y-QA with your existing tools and workflows</p>
+        <p className="text-text-secondary mt-1">Connect Sarfat Load Testing with your existing tools and workflows</p>
       </div>
 
       {/* CI/CD */}
@@ -140,7 +140,7 @@ export default function Integrations() {
             </label>
             <input
               className={inputClass}
-              placeholder="https://your-server.com/webhook/yqa"
+              placeholder="https://your-server.com/webhook/sarfat"
               value={config.genericWebhook}
               onChange={(e) => setConfig((c) => ({ ...c, genericWebhook: e.target.value }))}
             />

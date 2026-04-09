@@ -57,16 +57,16 @@ const FEATURES = [
 ];
 
 const COMPARISON = [
-  { feature: 'Visual Test Builder', yqa: true, k6Cloud: false, loadRunner: true, artillery: false },
-  { feature: 'AI Analysis (3-pass)', yqa: true, k6Cloud: false, loadRunner: false, artillery: false },
-  { feature: 'OpenAPI/HAR/Postman Import', yqa: true, k6Cloud: true, loadRunner: true, artillery: true },
-  { feature: 'Real-time WebSocket Dashboard', yqa: true, k6Cloud: true, loadRunner: true, artillery: false },
-  { feature: 'Multi-protocol (HTTP/WS/gRPC/GraphQL)', yqa: true, k6Cloud: true, loadRunner: true, artillery: true },
-  { feature: 'Baseline Regression Detection', yqa: true, k6Cloud: true, loadRunner: true, artillery: false },
-  { feature: 'Infrastructure Correlation', yqa: true, k6Cloud: false, loadRunner: true, artillery: false },
-  { feature: 'Auto PDF Reports', yqa: true, k6Cloud: false, loadRunner: true, artillery: false },
-  { feature: 'Self-hosted Option', yqa: true, k6Cloud: false, loadRunner: false, artillery: true },
-  { feature: 'Starting Price', yqa: '$0/mo', k6Cloud: '$165/mo', loadRunner: 'Contact', artillery: '$0/mo' },
+  { feature: 'Visual Test Builder', sarfat: true, k6Cloud: false, loadRunner: true, artillery: false },
+  { feature: 'AI Analysis (3-pass)', sarfat: true, k6Cloud: false, loadRunner: false, artillery: false },
+  { feature: 'OpenAPI/HAR/Postman Import', sarfat: true, k6Cloud: true, loadRunner: true, artillery: true },
+  { feature: 'Real-time WebSocket Dashboard', sarfat: true, k6Cloud: true, loadRunner: true, artillery: false },
+  { feature: 'Multi-protocol (HTTP/WS/gRPC/GraphQL)', sarfat: true, k6Cloud: true, loadRunner: true, artillery: true },
+  { feature: 'Baseline Regression Detection', sarfat: true, k6Cloud: true, loadRunner: true, artillery: false },
+  { feature: 'Infrastructure Correlation', sarfat: true, k6Cloud: false, loadRunner: true, artillery: false },
+  { feature: 'Auto PDF Reports', sarfat: true, k6Cloud: false, loadRunner: true, artillery: false },
+  { feature: 'Self-hosted Option', sarfat: true, k6Cloud: false, loadRunner: false, artillery: true },
+  { feature: 'Starting Price', sarfat: '$0/mo', k6Cloud: '$165/mo', loadRunner: 'Contact', artillery: '$0/mo' },
 ];
 
 const PRICING = [
@@ -130,7 +130,7 @@ export default function PitchDeck() {
             </div>
             <h1 className="text-5xl md:text-7xl font-bold leading-tight mb-6">
               <span className="bg-gradient-to-r from-accent via-blue-400 to-purple-400 bg-clip-text text-transparent">
-                Y-QA Load Testing
+                Sarfat Load Testing
               </span>
               <br />
               <span className="text-text-primary">Platform</span>
@@ -200,7 +200,7 @@ export default function PitchDeck() {
         <div className="max-w-5xl mx-auto">
           <AnimatedSection className="text-center mb-12">
             <h2 className="text-3xl font-bold text-text-primary">How We Compare</h2>
-            <p className="text-text-secondary mt-3">Y-QA vs the competition</p>
+            <p className="text-text-secondary mt-3">Sarfat vs the competition</p>
           </AnimatedSection>
           <AnimatedSection delay={0.1}>
             <div className="glass-card overflow-hidden">
@@ -209,7 +209,7 @@ export default function PitchDeck() {
                   <thead>
                     <tr className="border-b border-border">
                       <th className="text-left py-3 px-4 font-medium text-text-secondary">Feature</th>
-                      <th className="text-center py-3 px-4 font-bold text-accent">Y-QA</th>
+                      <th className="text-center py-3 px-4 font-bold text-accent">Sarfat</th>
                       <th className="text-center py-3 px-4 font-medium text-text-secondary">k6 Cloud</th>
                       <th className="text-center py-3 px-4 font-medium text-text-secondary">LoadRunner</th>
                       <th className="text-center py-3 px-4 font-medium text-text-secondary">Artillery</th>
@@ -219,12 +219,12 @@ export default function PitchDeck() {
                     {COMPARISON.map((row, idx) => (
                       <tr key={idx} className="border-b border-border/40 hover:bg-bg-card-hover/50 transition-colors">
                         <td className="py-2.5 px-4 text-text-primary">{row.feature}</td>
-                        {['yqa', 'k6Cloud', 'loadRunner', 'artillery'].map((key) => (
+                        {['sarfat', 'k6Cloud', 'loadRunner', 'artillery'].map((key) => (
                           <td key={key} className="py-2.5 px-4 text-center">
                             {typeof row[key] === 'boolean' ? (
                               row[key] ? <CheckCircle2 className="w-4 h-4 text-success mx-auto" /> : <span className="text-text-muted">—</span>
                             ) : (
-                              <span className={key === 'yqa' ? 'text-accent font-semibold' : 'text-text-secondary'}>{row[key]}</span>
+                              <span className={key === 'sarfat' ? 'text-accent font-semibold' : 'text-text-secondary'}>{row[key]}</span>
                             )}
                           </td>
                         ))}
@@ -325,7 +325,7 @@ export default function PitchDeck() {
             <a href="/login" className="flex items-center gap-2 px-8 py-3.5 bg-accent hover:bg-accent-light text-white rounded-xl text-base font-medium transition-colors">
               Get Started Free <ArrowRight className="w-4.5 h-4.5" />
             </a>
-            <a href="mailto:sales@yqa.dev" className="flex items-center gap-2 px-8 py-3.5 bg-bg-card border border-border hover:border-accent/50 text-text-secondary rounded-xl text-base transition-colors">
+            <a href="mailto:sales@sarfat.dev" className="flex items-center gap-2 px-8 py-3.5 bg-bg-card border border-border hover:border-accent/50 text-text-secondary rounded-xl text-base transition-colors">
               Talk to Sales
             </a>
           </div>
@@ -335,7 +335,7 @@ export default function PitchDeck() {
       {/* Footer */}
       <footer className="border-t border-border/30 py-8 px-6">
         <div className="max-w-5xl mx-auto flex items-center justify-between text-sm text-text-muted">
-          <span>&copy; {new Date().getFullYear()} Y-QA. All rights reserved.</span>
+          <span>&copy; {new Date().getFullYear()} Sarfat. All rights reserved.</span>
           <span>Built with performance in mind.</span>
         </div>
       </footer>

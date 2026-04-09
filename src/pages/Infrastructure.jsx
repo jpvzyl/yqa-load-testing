@@ -64,7 +64,7 @@ export default function Infrastructure() {
           <h3 className="text-sm font-semibold text-text-primary">Infrastructure Correlation</h3>
           <p className="text-sm text-text-secondary mt-1">
             Add monitoring targets to correlate infrastructure metrics (CPU, memory, network) with your load test results.
-            When a test runs, Y-QA automatically polls these targets and overlays the data in your run analysis for deeper insights.
+            When a test runs, Sarfat automatically polls these targets and overlays the data in your run analysis for deeper insights.
           </p>
         </div>
       </motion.div>

@@ -98,7 +98,7 @@ export const options = {
   thresholds: ${JSON.stringify(defaultThresholds, null, 2)},
   ${Object.keys(scenarios).length > 0 ? `scenarios: ${JSON.stringify(scenarios, null, 2)},` : ''}
   noConnectionReuse: false,
-  userAgent: 'Y-QA-LoadTest/1.0',
+  userAgent: 'Sarfat-LoadTest/1.0',
 };
 
 export default function () {

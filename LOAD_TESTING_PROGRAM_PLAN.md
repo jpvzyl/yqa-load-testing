@@ -1,4 +1,4 @@
-# Y-QA Load Testing Platform — Program Plan
+# Sarfat Load Testing Platform — Program Plan
 
 **Status:** Proposal  
 **Date:** 9 April 2026  
@@ -9,10 +9,10 @@
 
 ## 1. Executive Summary
 
-The Y-QA Load Testing Platform is a full-stack, AI-powered performance testing program designed for investment-grade analysis of system resilience, scalability, and reliability under load. It combines industrial-strength load generation (via k6) with Claude AI-driven analysis to produce executive-ready reports with automated bottleneck detection, capacity forecasting, and remediation roadmaps.
+The Sarfat Load Testing Platform is a full-stack, AI-powered performance testing program designed for investment-grade analysis of system resilience, scalability, and reliability under load. It combines industrial-strength load generation (via k6) with Claude AI-driven analysis to produce executive-ready reports with automated bottleneck detection, capacity forecasting, and remediation roadmaps.
 
 This program joins the existing Sarfat portfolio alongside:
-- **Y-QA Pen Testing** — Automated security assessment (SAST/DAST/AI)
+- **Sarfat Pen Testing** — Automated security assessment (SAST/DAST/AI)
 - **ISO 27001 Certification** — Compliance management platform
 - **Tech Due Diligence** — Investment-grade technical assessment
 
@@ -43,7 +43,7 @@ This program joins the existing Sarfat portfolio alongside:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                        Y-QA LOAD TESTING PLATFORM                       │
+│                        Sarfat LOAD TESTING PLATFORM                       │
 ├─────────────────────────────────────────────────────────────────────────┤
 │                                                                         │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌────────────┐ │
@@ -396,11 +396,11 @@ Aligns infrastructure metrics with load test timeline to answer:
 
 ```yaml
 # Example: GitHub Actions integration
-- name: Y-QA Load Test
-  uses: sarfat/yqa-load-test-action@v1
+- name: Sarfat Load Test
+  uses: sarfat/sarfat-load-test-action@v1
   with:
-    api_url: ${{ secrets.YQA_API_URL }}
-    api_key: ${{ secrets.YQA_API_KEY }}
+    api_url: ${{ secrets.SARFAT_API_URL }}
+    api_key: ${{ secrets.SARFAT_API_KEY }}
     test_id: "checkout-flow-load-test"
     thresholds:
       p95_response_time: 500ms
@@ -1201,7 +1201,7 @@ Load-Testing/
 
 ### 10.1 vs k6 Cloud / Grafana Cloud
 
-| Feature | k6 Cloud | Y-QA Load Testing |
+| Feature | k6 Cloud | Sarfat Load Testing |
 |---------|----------|-------------------|
 | AI analysis | None | 3-pass Claude pipeline with executive synthesis |
 | Visual builder | None (code-only) | Full no-code visual builder |
@@ -1213,7 +1213,7 @@ Load-Testing/
 
 ### 10.2 vs LoadRunner / NeoLoad (Enterprise)
 
-| Feature | Enterprise Tools | Y-QA Load Testing |
+| Feature | Enterprise Tools | Sarfat Load Testing |
 |---------|-----------------|-------------------|
 | Cost | $10K-100K+ annually | Competitive SaaS or self-hosted |
 | Setup time | Days to weeks | Minutes |
@@ -1224,7 +1224,7 @@ Load-Testing/
 
 ### 10.3 vs Artillery / Locust
 
-| Feature | Artillery/Locust | Y-QA Load Testing |
+| Feature | Artillery/Locust | Sarfat Load Testing |
 |---------|-----------------|-------------------|
 | Engine performance | Good / Moderate | Excellent (k6 Go engine) |
 | Web dashboard | Basic | Rich real-time SPA |
@@ -1337,7 +1337,7 @@ Load-Testing/
 
 ## 15. Summary
 
-The Y-QA Load Testing Platform will be the **most intelligent load testing tool on the market**, combining:
+The Sarfat Load Testing Platform will be the **most intelligent load testing tool on the market**, combining:
 
 1. **k6's industrial-strength engine** for reliable, high-performance load generation
 2. **Claude AI's analytical depth** for automated bottleneck detection, root-cause analysis, and actionable remediation
@@ -1350,9 +1350,9 @@ This positions Sarfat with a complete quality assurance portfolio:
 
 ```
 ISO 27001 Certification  →  Compliance & governance
-Y-QA Pen Testing         →  Security assessment
+Sarfat Pen Testing         →  Security assessment
 Tech Due Diligence       →  Investment-grade technical review
-Y-QA Load Testing        →  Performance & resilience validation
+Sarfat Load Testing        →  Performance & resilience validation
 ```
 
 Together, these four programs cover the full spectrum of technical quality assurance that modern enterprises require.

@@ -1,7 +1,7 @@
 {
-  "name": "yqa-load-testing",
+  "name": "sarfat-load-testing",
   "version": "1.0.0",
-  "description": "Y-QA Load Testing Platform — AI-powered performance testing and analysis",
+  "description": "Sarfat Load Testing Platform — AI-powered performance testing and analysis",
   "type": "module",
   "engines": {
     "node": ">=20.0.0"

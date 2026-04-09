@@ -6,7 +6,7 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('yqa_lt_token');
+  const token = localStorage.getItem('sarfat_lt_token');
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
@@ -15,7 +15,7 @@ api.interceptors.response.use(
   (res) => res,
   (err) => {
     if (err.response?.status === 401) {
-      localStorage.removeItem('yqa_lt_token');
+      localStorage.removeItem('sarfat_lt_token');
       if (!window.location.hash.includes('/login')) {
         window.location.hash = '#/login';
       }

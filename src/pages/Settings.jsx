@@ -47,7 +47,7 @@ export default function Settings() {
     duration: '30s',
     testType: 'load',
   });
-  const apiKey = 'yqa_lt_' + btoa(profile.email || 'user').slice(0, 24) + '...';
+  const apiKey = 'sarfat_lt_' + btoa(profile.email || 'user').slice(0, 24) + '...';
 
   useEffect(() => {
     auth.me()

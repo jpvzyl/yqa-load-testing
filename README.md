@@ -1,4 +1,4 @@
-# Y-QA Load Testing Platform
+# Sarfat Load Testing Platform
 
 **AI-Powered Performance Testing & Resilience Validation**
 
@@ -41,7 +41,7 @@ cd Load-Testing
 npm install
 
 # Set environment variables
-export DATABASE_URL=postgresql://user:pass@localhost:5432/yqa_loadtest
+export DATABASE_URL=postgresql://user:pass@localhost:5432/sarfat_loadtest
 export ANTHROPIC_API_KEY=sk-ant-...    # Optional, enables AI analysis
 export PORT=3006                        # Optional, defaults to 3006
 
@@ -166,9 +166,9 @@ Part of the Sarfat quality assurance suite:
 | Program | Focus |
 |---------|-------|
 | **ISO 27001 Certification** | Compliance & governance |
-| **Y-QA Pen Testing** | Security assessment |
+| **Sarfat Pen Testing** | Security assessment |
 | **Tech Due Diligence** | Investment-grade technical review |
-| **Y-QA Load Testing** | Performance & resilience validation |
+| **Sarfat Load Testing** | Performance & resilience validation |
 
 ## License
 

@@ -75,7 +75,7 @@ async function sendSlack(event, data, channel) {
         value: f.value,
         short: f.inline,
       })),
-      footer: 'Y-QA Load Testing Platform',
+      footer: 'Sarfat Load Testing Platform',
       ts: Math.floor(Date.now() / 1000),
     }],
   };

@@ -636,9 +636,9 @@ async function start() {
   }
 
   server.listen(PORT, () => {
-    console.log(`[Y-QA Load Testing] Server running on port ${PORT}`);
-    console.log(`[Y-QA Load Testing] API: http://localhost:${PORT}/api/v1`);
-    console.log(`[Y-QA Load Testing] WebSocket: ws://localhost:${PORT}/ws`);
+    console.log(`[Sarfat Load Testing] Server running on port ${PORT}`);
+    console.log(`[Sarfat Load Testing] API: http://localhost:${PORT}/api/v1`);
+    console.log(`[Sarfat Load Testing] WebSocket: ws://localhost:${PORT}/ws`);
   });
 }
 
