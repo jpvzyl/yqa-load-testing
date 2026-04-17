@@ -27,6 +27,17 @@ const Settings = lazy(() => import('./pages/Settings'));
 const PitchDeck = lazy(() => import('./pages/PitchDeck'));
 const Login = lazy(() => import('./pages/Login'));
 
+const WorkerPool = lazy(() => import('./pages/WorkerPool'));
+const TraceExplorer = lazy(() => import('./pages/TraceExplorer'));
+const ChaosExperiments = lazy(() => import('./pages/ChaosExperiments'));
+const TrafficReplay = lazy(() => import('./pages/TrafficReplay'));
+const PRGates = lazy(() => import('./pages/PRGates'));
+const SLODashboard = lazy(() => import('./pages/SLODashboard'));
+const CostAnalysis = lazy(() => import('./pages/CostAnalysis'));
+const WorkloadModeler = lazy(() => import('./pages/WorkloadModeler'));
+const ComplianceReports = lazy(() => import('./pages/ComplianceReports'));
+const EvidenceBrowser = lazy(() => import('./pages/EvidenceBrowser'));
+
 function PageLoader() {
   return (
     <div className="flex items-center justify-center min-h-[60vh]">
@@ -65,6 +76,16 @@ export default function App() {
             <Route path="trends" element={<Trends />} />
             <Route path="infrastructure" element={<Infrastructure />} />
             <Route path="integrations" element={<Integrations />} />
+            <Route path="workers" element={<WorkerPool />} />
+            <Route path="traces/:runId" element={<TraceExplorer />} />
+            <Route path="chaos" element={<ChaosExperiments />} />
+            <Route path="replay" element={<TrafficReplay />} />
+            <Route path="pr-gates" element={<PRGates />} />
+            <Route path="slo-dashboard" element={<SLODashboard />} />
+            <Route path="cost-analysis/:runId" element={<CostAnalysis />} />
+            <Route path="workload-modeler" element={<WorkloadModeler />} />
+            <Route path="compliance" element={<ComplianceReports />} />
+            <Route path="evidence" element={<EvidenceBrowser />} />
             <Route path="settings" element={<Settings />} />
           </Route>
         </Route>

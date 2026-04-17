@@ -1,0 +1,50 @@
+# =============================================================================
+# Sarfat Load Testing Platform — k6 Worker
+# Extended k6 binary with xk6 protocol extensions
+# =============================================================================
+
+FROM golang:1.22-alpine AS builder
+
+RUN apk add --no-cache git
+
+RUN go install go.k6.io/xk6/cmd/xk6@latest
+
+RUN xk6 build latest \
+  --with github.com/grafana/xk6-output-prometheus-remote \
+  --with github.com/pmalhaire/xk6-mqtt \
+  --with github.com/mostafa/xk6-kafka \
+  --with github.com/grafana/xk6-amqp \
+  --with github.com/grafana/xk6-redis \
+  --with github.com/grafana/xk6-sql \
+  --with github.com/grafana/xk6-browser \
+  --output /tmp/k6
+
+# ---------------------------------------------------------------------------
+# Runtime: minimal Alpine with the custom k6 binary
+# ---------------------------------------------------------------------------
+FROM alpine:3.20
+
+LABEL org.opencontainers.image.title="sarfat-k6-worker" \
+      org.opencontainers.image.description="Sarfat Load Testing — k6 worker with protocol extensions" \
+      org.opencontainers.image.vendor="Sarfat Engineering" \
+      org.opencontainers.image.version="2.0.0"
+
+RUN apk add --no-cache ca-certificates tini curl chromium
+
+COPY --from=builder /tmp/k6 /usr/local/bin/k6
+
+RUN addgroup -S sarfat && adduser -S sarfat -G sarfat
+RUN mkdir -p /scripts /results && chown -R sarfat:sarfat /scripts /results
+
+COPY templates/ /scripts/templates/
+
+USER sarfat
+WORKDIR /scripts
+
+ENV K6_BROWSER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
+  CMD k6 version || exit 1
+
+ENTRYPOINT ["tini", "--"]
+CMD ["k6", "version"]

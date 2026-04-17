@@ -1,0 +1,158 @@
+# =============================================================================
+# Sarfat Load Testing Platform — Default Helm Values
+# Override per-environment via values-<env>.yaml or --set flags
+# =============================================================================
+
+global:
+  namespace: sarfat
+  imageRegistry: ghcr.io/sarfat
+  imagePullSecrets:
+    - name: ghcr-pull-secret
+
+# ---------------------------------------------------------------------------
+# Control Plane
+# ---------------------------------------------------------------------------
+controlPlane:
+  replicaCount: 2
+  image:
+    repository: control-plane
+    tag: "2.0.0"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 3006
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi
+  env:
+    NODE_ENV: production
+    PORT: "3006"
+    LOG_LEVEL: info
+  secrets:
+    existingSecret: sarfat-secrets
+    databaseUrlKey: database-url
+    anthropicApiKeyKey: anthropic-api-key
+    jwtSecretKey: jwt-secret
+
+# ---------------------------------------------------------------------------
+# Worker Pool
+# ---------------------------------------------------------------------------
+worker:
+  replicaCount: 2
+  image:
+    repository: k6-worker
+    tag: "2.0.0"
+    pullPolicy: IfNotPresent
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: "4"
+      memory: 4Gi
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 50
+    targetCPU: 70
+    targetMemory: 80
+    scaleUpStabilization: 30
+    scaleDownStabilization: 300
+  regions:
+    - name: us-east-1
+      nodeSelector:
+        topology.kubernetes.io/region: us-east-1
+      minWorkers: 2
+      maxWorkers: 20
+    - name: eu-west-1
+      nodeSelector:
+        topology.kubernetes.io/region: eu-west-1
+      minWorkers: 1
+      maxWorkers: 15
+    - name: ap-southeast-1
+      nodeSelector:
+        topology.kubernetes.io/region: ap-southeast-1
+      minWorkers: 1
+      maxWorkers: 15
+
+# ---------------------------------------------------------------------------
+# PostgreSQL (Bitnami subchart)
+# ---------------------------------------------------------------------------
+postgresql:
+  enabled: true
+  auth:
+    database: sarfat_load_testing
+    username: sarfat
+    existingSecret: sarfat-postgres-secret
+  primary:
+    persistence:
+      size: 50Gi
+      storageClass: gp3
+    resources:
+      requests:
+        cpu: 250m
+        memory: 512Mi
+      limits:
+        cpu: "2"
+        memory: 2Gi
+
+# ---------------------------------------------------------------------------
+# NATS (nats.io subchart)
+# ---------------------------------------------------------------------------
+nats:
+  enabled: true
+  jetstream:
+    enabled: true
+    memoryStore:
+      maxSize: 1Gi
+    fileStore:
+      maxSize: 10Gi
+      storageClassName: gp3
+
+# ---------------------------------------------------------------------------
+# Redis (Bitnami subchart)
+# ---------------------------------------------------------------------------
+redis:
+  enabled: true
+  architecture: standalone
+  auth:
+    enabled: false
+  master:
+    persistence:
+      size: 5Gi
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 256Mi
+
+# ---------------------------------------------------------------------------
+# Evidence Store (S3)
+# ---------------------------------------------------------------------------
+evidenceStore:
+  bucket: sarfat-evidence
+  region: us-east-1
+  prefix: load-tests/
+
+# ---------------------------------------------------------------------------
+# Ingress
+# ---------------------------------------------------------------------------
+ingress:
+  enabled: true
+  className: nginx
+  host: load.sarfat.io
+  tls:
+    enabled: true
+    secretName: sarfat-tls
+    clusterIssuer: letsencrypt-prod
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/websocket-services: sarfat-control-plane

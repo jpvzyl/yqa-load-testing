@@ -1,10 +1,13 @@
 {
   "name": "sarfat-load-testing",
-  "version": "1.0.0",
-  "description": "Sarfat Load Testing Platform — AI-powered performance testing and analysis",
+  "version": "2.0.0",
+  "description": "Sarfat Load Testing Platform v2 — Enterprise AI-powered distributed performance testing",
   "type": "module",
   "engines": {
     "node": ">=20.0.0"
+  },
+  "bin": {
+    "sarfat": "./cli/sarfat-cli.js"
   },
   "scripts": {
     "dev": "vite",
@@ -19,7 +22,8 @@
     "test:watch": "vitest",
     "lint": "eslint .",
     "seed": "node scripts/seed-demo-data.js",
-    "migrate": "node scripts/migrate.js"
+    "migrate": "node scripts/migrate.js",
+    "migrate:v2": "node scripts/migrate-v2.js"
   },
   "dependencies": {
     "express": "^5.1.0",
@@ -32,6 +36,10 @@
     "node-cron": "^3.0.3",
     "yaml": "^2.7.0",
     "uuid": "^11.1.0"
+  },
+  "optionalDependencies": {
+    "nats": "^2.28.0",
+    "@aws-sdk/client-s3": "^3.700.0"
   },
   "devDependencies": {
     "react": "^19.1.0",

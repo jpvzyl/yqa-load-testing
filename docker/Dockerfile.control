@@ -1,0 +1,58 @@
+# =============================================================================
+# Sarfat Load Testing Platform — Control Plane
+# Multi-stage build: Vite frontend + Express 5 API server
+# =============================================================================
+
+# ---------------------------------------------------------------------------
+# Stage 1: Build the Vite/React frontend
+# ---------------------------------------------------------------------------
+FROM node:20-alpine AS frontend-build
+
+WORKDIR /build
+
+COPY package.json package-lock.json* ./
+RUN npm ci --ignore-scripts
+
+COPY index.html vite.config.js tailwind.config.js* ./
+COPY src/ src/
+COPY public/ public/
+
+RUN npm run build
+
+# ---------------------------------------------------------------------------
+# Stage 2: Production runtime — Express API + static frontend
+# ---------------------------------------------------------------------------
+FROM node:20-alpine AS runtime
+
+LABEL org.opencontainers.image.title="sarfat-control-plane" \
+      org.opencontainers.image.description="Sarfat Load Testing Platform — control plane" \
+      org.opencontainers.image.vendor="Sarfat Engineering" \
+      org.opencontainers.image.version="2.0.0"
+
+RUN apk add --no-cache tini curl
+
+RUN addgroup -S sarfat && adduser -S sarfat -G sarfat
+
+WORKDIR /app
+
+COPY package.json package-lock.json* ./
+RUN npm ci --omit=dev --ignore-scripts && npm cache clean --force
+
+COPY server.js db.js k6-runner.js metrics-ingester.js scoring.js ./
+COPY ai-analyzer.js baselines.js regression-detector.js report-generator.js ./
+COPY infra-monitor.js correlation-engine.js scheduler.js notifications.js ./
+COPY importers/ importers/
+COPY templates/ templates/
+
+COPY --from=frontend-build /build/dist ./dist
+
+RUN chown -R sarfat:sarfat /app
+USER sarfat
+
+EXPOSE 3006
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD curl -f http://localhost:3006/api/v1/health || exit 1
+
+ENTRYPOINT ["tini", "--"]
+CMD ["node", "server.js"]

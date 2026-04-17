@@ -26,6 +26,16 @@ import {
   LogOut,
   Menu,
   X,
+  Network,
+  ScanSearch,
+  Bomb,
+  RotateCcw,
+  GitPullRequest,
+  Target,
+  DollarSign,
+  Workflow,
+  Award,
+  Archive,
 } from 'lucide-react';
 
 const NAV_SECTIONS = [
@@ -50,6 +60,7 @@ const NAV_SECTIONS = [
     label: 'EXECUTION',
     items: [
       { to: '/runs', icon: PlayCircle, label: 'Test Runs' },
+      { to: '/workload-modeler', icon: Workflow, label: 'Workload Modeler' },
       { to: '/schedules', icon: Calendar, label: 'Schedules' },
     ],
   },
@@ -60,6 +71,20 @@ const NAV_SECTIONS = [
       { to: '/baselines', icon: Baseline, label: 'Baselines' },
       { to: '/comparison', icon: GitCompareArrows, label: 'Comparisons' },
       { to: '/capacity', icon: Gauge, label: 'Capacity Planning' },
+      { to: '/slo-dashboard', icon: Target, label: 'SLO Dashboard' },
+    ],
+  },
+  {
+    label: 'RESILIENCE',
+    items: [
+      { to: '/chaos', icon: Bomb, label: 'Chaos Engineering' },
+      { to: '/replay', icon: RotateCcw, label: 'Traffic Replay' },
+    ],
+  },
+  {
+    label: 'CI/CD',
+    items: [
+      { to: '/pr-gates', icon: GitPullRequest, label: 'PR Gates' },
     ],
   },
   {
@@ -67,11 +92,14 @@ const NAV_SECTIONS = [
     items: [
       { to: '/reports', icon: FileText, label: 'Reports' },
       { to: '/sla', icon: ShieldCheck, label: 'SLA Compliance' },
+      { to: '/compliance', icon: Award, label: 'Compliance' },
+      { to: '/evidence', icon: Archive, label: 'Evidence' },
     ],
   },
   {
     label: 'SYSTEM',
     items: [
+      { to: '/workers', icon: Network, label: 'Worker Pool' },
       { to: '/integrations', icon: Plug, label: 'Integrations' },
       { to: '/infrastructure', icon: Server, label: 'Infrastructure' },
       { to: '/settings', icon: Settings, label: 'Settings' },

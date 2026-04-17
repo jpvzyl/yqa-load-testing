@@ -1,0 +1,158 @@
+# =============================================================================
+# Sarfat Load Testing Platform — SarfatWorkerPool CRD
+# Custom Resource Definition for declarative worker pool management
+# =============================================================================
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: sarfatworkerpools.sarfat.io
+  labels:
+    app.kubernetes.io/name: sarfat-operator
+    app.kubernetes.io/part-of: sarfat-load-testing
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.14.0
+spec:
+  group: sarfat.io
+  names:
+    kind: SarfatWorkerPool
+    listKind: SarfatWorkerPoolList
+    plural: sarfatworkerpools
+    singular: sarfatworkerpool
+    shortNames:
+      - swp
+    categories:
+      - sarfat
+  scope: Namespaced
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      subresources:
+        status: {}
+        scale:
+          specReplicasPath: .spec.minWorkers
+          statusReplicasPath: .status.readyWorkers
+      additionalPrinterColumns:
+        - name: Regions
+          type: string
+          jsonPath: .status.activeRegions
+        - name: Min
+          type: integer
+          jsonPath: .spec.minWorkers
+        - name: Max
+          type: integer
+          jsonPath: .spec.maxWorkers
+        - name: Ready
+          type: integer
+          jsonPath: .status.readyWorkers
+        - name: Age
+          type: date
+          jsonPath: .metadata.creationTimestamp
+      schema:
+        openAPIV3Schema:
+          type: object
+          description: SarfatWorkerPool defines a regional pool of k6 load-generation workers.
+          properties:
+            apiVersion:
+              type: string
+            kind:
+              type: string
+            metadata:
+              type: object
+            spec:
+              type: object
+              required: [regions, minWorkers, maxWorkers]
+              properties:
+                regions:
+                  type: array
+                  description: Geographic regions where workers are scheduled.
+                  minItems: 1
+                  items:
+                    type: object
+                    required: [name]
+                    properties:
+                      name:
+                        type: string
+                        description: AWS/GCP/Azure region identifier (e.g. us-east-1).
+                      weight:
+                        type: integer
+                        minimum: 1
+                        maximum: 100
+                        default: 1
+                        description: Proportional share of total workers allocated to this region.
+                      nodeSelector:
+                        type: object
+                        additionalProperties:
+                          type: string
+                        description: Kubernetes node labels for region-aware scheduling.
+                minWorkers:
+                  type: integer
+                  minimum: 0
+                  description: Minimum total workers across all regions (floor during idle).
+                maxWorkers:
+                  type: integer
+                  minimum: 1
+                  description: Maximum total workers across all regions (ceiling during burst).
+                image:
+                  type: string
+                  default: "ghcr.io/sarfat/k6-worker:2.0.0"
+                  description: Container image for the k6 worker pods.
+                resources:
+                  type: object
+                  description: Resource requests and limits for each worker pod.
+                  properties:
+                    requests:
+                      type: object
+                      properties:
+                        cpu:
+                          type: string
+                          default: "500m"
+                        memory:
+                          type: string
+                          default: "512Mi"
+                    limits:
+                      type: object
+                      properties:
+                        cpu:
+                          type: string
+                          default: "4"
+                        memory:
+                          type: string
+                          default: "4Gi"
+                natsUrl:
+                  type: string
+                  default: "nats://sarfat-nats:4222"
+                  description: NATS server URL for worker coordination.
+                scaleDownStabilizationSeconds:
+                  type: integer
+                  default: 300
+                  description: Cool-down period before scaling down idle workers.
+            status:
+              type: object
+              properties:
+                readyWorkers:
+                  type: integer
+                  description: Number of workers currently ready to accept test runs.
+                activeRegions:
+                  type: string
+                  description: Comma-separated list of regions with running workers.
+                lastScaleTime:
+                  type: string
+                  format: date-time
+                  description: Timestamp of the most recent scaling event.
+                conditions:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                      status:
+                        type: string
+                      lastTransitionTime:
+                        type: string
+                        format: date-time
+                      reason:
+                        type: string
+                      message:
+                        type: string

@@ -617,6 +617,19 @@ app.get('/{*splat}', (req, res, next) => {
   res.sendFile(path.join(distPath, 'index.html'));
 });
 
+// --- v2 Routes ---
+
+import { registerV2Routes } from './server-v2-routes.js';
+import { initializeDatabaseV2 } from './db-v2.js';
+
+registerV2Routes(app, authenticate);
+
+// --- Health Check ---
+
+app.get('/api/v1/health', (_req, res) => {
+  res.json({ status: 'ok', version: '2.0.0', timestamp: new Date().toISOString() });
+});
+
 // --- Start ---
 
 const PORT = process.env.PORT || 3006;
@@ -624,6 +637,7 @@ const PORT = process.env.PORT || 3006;
 async function start() {
   if (process.env.DATABASE_URL) {
     await db.initializeDatabase();
+    await initializeDatabaseV2();
     initializeScheduler((testId, opts) => {
       return db.getTestById(testId).then(test => {
         if (!test) throw new Error('Test not found');
@@ -636,9 +650,10 @@ async function start() {
   }
 
   server.listen(PORT, () => {
-    console.log(`[Sarfat Load Testing] Server running on port ${PORT}`);
-    console.log(`[Sarfat Load Testing] API: http://localhost:${PORT}/api/v1`);
-    console.log(`[Sarfat Load Testing] WebSocket: ws://localhost:${PORT}/ws`);
+    console.log(`[Sarfat Load Testing v2] Server running on port ${PORT}`);
+    console.log(`[Sarfat Load Testing v2] API v1: http://localhost:${PORT}/api/v1`);
+    console.log(`[Sarfat Load Testing v2] API v2: http://localhost:${PORT}/api/v2`);
+    console.log(`[Sarfat Load Testing v2] WebSocket: ws://localhost:${PORT}/ws`);
   });
 }
 

@@ -1,0 +1,151 @@
+# =============================================================================
+# Sarfat Load Testing Platform — Local Development Stack
+# Usage: docker compose up -d
+# =============================================================================
+
+services:
+  # ---------------------------------------------------------------------------
+  # PostgreSQL 16 — primary data store (14 tables)
+  # ---------------------------------------------------------------------------
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: sarfat_load_testing
+      POSTGRES_USER: sarfat
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sarfat_dev_2026}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sarfat -d sarfat_load_testing"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # NATS with JetStream — worker coordination & event streaming
+  # ---------------------------------------------------------------------------
+  nats:
+    image: nats:latest
+    restart: unless-stopped
+    command: ["--js", "--sd", "/data", "-m", "8222"]
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    volumes:
+      - natsdata:/data
+    healthcheck:
+      test: ["CMD", "nats-server", "--signal", "ldm"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  # ---------------------------------------------------------------------------
+  # Redis — caching, rate limiting, and session store
+  # ---------------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # Control Plane — Express 5 API + Vite React frontend
+  # ---------------------------------------------------------------------------
+  control-plane:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.control
+    restart: unless-stopped
+    ports:
+      - "3006:3006"
+    environment:
+      NODE_ENV: production
+      PORT: "3006"
+      DATABASE_URL: postgres://sarfat:${POSTGRES_PASSWORD:-sarfat_dev_2026}@postgres:5432/sarfat_load_testing
+      NATS_URL: nats://nats:4222
+      REDIS_URL: redis://redis:6379
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      JWT_SECRET: ${JWT_SECRET:-sarfat-dev-jwt-secret-change-me}
+      EVIDENCE_STORE_BUCKET: ${EVIDENCE_STORE_BUCKET:-sarfat-evidence-dev}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3006/api/v1/health"]
+      interval: 30s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
+
+  # ---------------------------------------------------------------------------
+  # Worker 1 — k6 load generator (region: us-east-1)
+  # ---------------------------------------------------------------------------
+  worker-1:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.worker
+    restart: unless-stopped
+    environment:
+      WORKER_ID: worker-1
+      WORKER_REGION: us-east-1
+      NATS_URL: nats://nats:4222
+      CONTROL_PLANE_URL: http://control-plane:3006
+      K6_OUT: json=/results/output.json
+    volumes:
+      - worker1_results:/results
+    depends_on:
+      nats:
+        condition: service_healthy
+      control-plane:
+        condition: service_healthy
+
+  # ---------------------------------------------------------------------------
+  # Worker 2 — k6 load generator (region: eu-west-1)
+  # ---------------------------------------------------------------------------
+  worker-2:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.worker
+    restart: unless-stopped
+    environment:
+      WORKER_ID: worker-2
+      WORKER_REGION: eu-west-1
+      NATS_URL: nats://nats:4222
+      CONTROL_PLANE_URL: http://control-plane:3006
+      K6_OUT: json=/results/output.json
+    volumes:
+      - worker2_results:/results
+    depends_on:
+      nats:
+        condition: service_healthy
+      control-plane:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+    driver: local
+  natsdata:
+    driver: local
+  redisdata:
+    driver: local
+  worker1_results:
+    driver: local
+  worker2_results:
+    driver: local

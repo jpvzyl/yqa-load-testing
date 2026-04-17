@@ -102,4 +102,127 @@ export const ai = {
   generateTest: (data) => api.post('/ai/generate-test', data),
 };
 
+const apiv2 = axios.create({
+  baseURL: '/api/v2',
+  headers: { 'Content-Type': 'application/json' },
+});
+apiv2.interceptors.request.use((config) => {
+  const token = localStorage.getItem('sarfat_lt_token');
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+apiv2.interceptors.response.use((res) => res, (err) => {
+  if (err.response?.status === 401) {
+    localStorage.removeItem('sarfat_lt_token');
+    if (!window.location.hash.includes('/login')) window.location.hash = '#/login';
+  }
+  return Promise.reject(err);
+});
+
+export const workers = {
+  list: (filters) => apiv2.get('/workers', { params: filters }),
+  status: () => apiv2.get('/workers/status'),
+  register: (data) => apiv2.post('/workers', data),
+  heartbeats: (id) => apiv2.get(`/workers/${id}/heartbeats`),
+  deregister: (id) => apiv2.delete(`/workers/${id}`),
+};
+
+export const scenarios = {
+  list: (projectId) => apiv2.get('/scenarios', { params: { project_id: projectId } }),
+  get: (id) => apiv2.get(`/scenarios/${id}`),
+  create: (data) => apiv2.post('/scenarios', data),
+  update: (id, data) => apiv2.put(`/scenarios/${id}`, data),
+  versions: (id) => apiv2.get(`/scenarios/${id}/versions`),
+};
+
+export const workloadModels = {
+  list: (testId) => apiv2.get('/workload-models', { params: { test_id: testId } }),
+  create: (data) => apiv2.post('/workload-models', data),
+  update: (id, data) => apiv2.put(`/workload-models/${id}`, data),
+  generate: (id) => apiv2.post(`/workload-models/${id}/generate`),
+};
+
+export const slosV2 = {
+  list: (projectId) => apiv2.get('/slos', { params: { project_id: projectId } }),
+  create: (data) => apiv2.post('/slos', data),
+  burn: (id) => apiv2.get(`/slos/${id}/burn`),
+  evaluate: (runId) => apiv2.post(`/runs/${runId}/slo-evaluation`),
+};
+
+export const performanceBudgets = {
+  list: (projectId) => apiv2.get('/performance-budgets', { params: { project_id: projectId } }),
+  create: (data) => apiv2.post('/performance-budgets', data),
+  check: (runId) => apiv2.post(`/runs/${runId}/budget-check`),
+};
+
+export const traces = {
+  list: (runId) => apiv2.get(`/runs/${runId}/traces`),
+  waterfall: (traceId) => apiv2.get(`/traces/${traceId}`),
+  logs: (traceId) => apiv2.get(`/traces/${traceId}/logs`),
+  slow: (runId) => apiv2.get(`/runs/${runId}/slow-traces`),
+  correlate: (runId) => apiv2.get(`/runs/${runId}/trace-correlation`),
+  errorCorrelation: (runId) => apiv2.get(`/runs/${runId}/error-correlation`),
+  runLogs: (runId) => apiv2.get(`/runs/${runId}/logs`),
+};
+
+export const chaos = {
+  catalog: () => apiv2.get('/chaos/catalog'),
+  list: (projectId) => apiv2.get('/chaos/experiments', { params: { project_id: projectId } }),
+  create: (data) => apiv2.post('/chaos/experiments', data),
+  execute: (id, runId) => apiv2.post(`/chaos/experiments/${id}/execute`, { run_id: runId }),
+  evaluate: (id, runId) => apiv2.post(`/chaos/experiments/${id}/evaluate`, { run_id: runId }),
+  results: (id) => apiv2.get(`/chaos/experiments/${id}/results`),
+};
+
+export const replay = {
+  captures: (projectId) => apiv2.get('/captures', { params: { project_id: projectId } }),
+  startCapture: (data) => apiv2.post('/captures', data),
+  stopCapture: (id) => apiv2.post(`/captures/${id}/stop`),
+  startReplay: (id, data) => apiv2.post(`/captures/${id}/replay`, data),
+  activeReplays: () => apiv2.get('/replays'),
+  completeReplay: (id) => apiv2.post(`/replays/${id}/complete`),
+  getReplay: (id) => apiv2.get(`/replays/${id}`),
+};
+
+export const prGates = {
+  list: (projectId) => apiv2.get('/pr-gates', { params: { project_id: projectId } }),
+  configure: (data) => apiv2.post('/pr-gates', data),
+  complete: (id, runId) => apiv2.post(`/pr-gates/${id}/complete`, { run_id: runId }),
+};
+
+export const costAnalysis = {
+  estimate: (runId, data) => apiv2.post(`/runs/${runId}/cost-estimate`, data),
+  get: (runId) => apiv2.get(`/runs/${runId}/cost-estimates`),
+};
+
+export const evidence = {
+  list: (runId) => apiv2.get(`/runs/${runId}/evidence`),
+  get: (id) => apiv2.get(`/evidence/${id}`),
+  complianceBundle: (runId) => apiv2.post(`/runs/${runId}/compliance-bundle`),
+  verify: (runId) => apiv2.post(`/runs/${runId}/verify-integrity`),
+  stats: () => apiv2.get('/evidence/stats'),
+};
+
+export const compliance = {
+  report: (runId, framework) => apiv2.post(`/runs/${runId}/compliance-report`, { framework }),
+  frameworks: () => apiv2.get('/compliance/frameworks'),
+};
+
+export const aiV2 = {
+  analyze: (runId) => apiv2.post(`/runs/${runId}/analyze-v2`),
+  analyzeDiff: (runId, previousRunId) => apiv2.post(`/runs/${runId}/analyze-v2/diff`, { previous_run_id: previousRunId }),
+  agents: () => apiv2.get('/ai/agents'),
+  evals: (agentName) => apiv2.get(`/ai/evals/${agentName}`),
+};
+
+export const apm = {
+  integrations: () => apiv2.get('/apm/integrations'),
+  register: (data) => apiv2.post('/apm/integrations', data),
+  supported: () => apiv2.get('/apm/supported'),
+};
+
+export const platformStatus = {
+  get: () => apiv2.get('/status'),
+};
+
 export default api;

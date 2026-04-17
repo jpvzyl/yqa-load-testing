@@ -1,0 +1,38 @@
+# =============================================================================
+# Sarfat Load Testing Platform — Helm Chart
+# =============================================================================
+apiVersion: v2
+name: sarfat-load-testing
+description: >-
+  AI-powered load testing and performance validation platform.
+  Combines k6 with Claude AI for automated test execution,
+  real-time monitoring, and executive-grade reporting.
+type: application
+version: 2.0.0
+appVersion: "2.0.0"
+home: https://sarfat.io
+sources:
+  - https://github.com/jpvzyl/yqa-load-testing
+maintainers:
+  - name: Sarfat Engineering
+    email: engineering@sarfat.io
+    url: https://sarfat.io
+keywords:
+  - load-testing
+  - performance
+  - k6
+  - ai
+  - observability
+dependencies:
+  - name: postgresql
+    version: "~15.0"
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.enabled
+  - name: nats
+    version: "~1.2"
+    repository: https://nats-io.github.io/k8s/helm/charts/
+    condition: nats.enabled
+  - name: redis
+    version: "~19.0"
+    repository: https://charts.bitnami.com/bitnami
+    condition: redis.enabled
