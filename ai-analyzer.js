@@ -7,7 +7,7 @@ const getClient = () => {
 };
 
 const SONNET = 'claude-sonnet-4-20250514';
-const OPUS = 'claude-sonnet-4-20250514'; // fallback to sonnet if opus unavailable
+const OPUS = 'claude-opus-4-7';
 
 export async function runFullAnalysis(runId, options = {}) {
   const run = await db.getRunById(runId);
