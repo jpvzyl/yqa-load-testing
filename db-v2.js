@@ -116,7 +116,7 @@ export async function initializeDatabaseV2() {
       endpoint VARCHAR(500),
       metric VARCHAR(50) NOT NULL,
       target DOUBLE PRECISION NOT NULL,
-      window VARCHAR(10) NOT NULL DEFAULT '30d',
+      time_window VARCHAR(10) NOT NULL DEFAULT '30d',
       percentile DOUBLE PRECISION,
       threshold_ms DOUBLE PRECISION,
       error_budget_policy JSONB DEFAULT '{}',
@@ -605,10 +605,10 @@ export async function getSlos(projectId) {
 export async function createSlo(data) {
   const db = getPool();
   const result = await db.query(
-    `INSERT INTO slos (project_id, name, service, endpoint, metric, target, window, percentile, threshold_ms, error_budget_policy)
+    `INSERT INTO slos (project_id, name, service, endpoint, metric, target, time_window, percentile, threshold_ms, error_budget_policy)
      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`,
     [data.project_id, data.name, data.service, data.endpoint, data.metric,
-     data.target, data.window || '30d', data.percentile, data.threshold_ms,
+     data.target, data.window || data.time_window || '30d', data.percentile, data.threshold_ms,
      JSON.stringify(data.error_budget_policy || {})]
   );
   return result.rows[0];
